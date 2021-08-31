@@ -20,14 +20,48 @@ public:
         stream(std::cout) << std::endl;
     }
 
+    void compile() const {
+        emit(std::cout) << std::endl;
+    }
+
     std::unique_ptr<Exp> run() const {
         Ctxt ctxt;
         return eval(ctxt);
     }
 
-    virtual std::ostream& stream(std::ostream&) const = 0;
     virtual std::unique_ptr<Exp> clone() const = 0;
     virtual std::unique_ptr<Exp> eval(Ctxt&) const = 0;
+    virtual std::ostream& emit(std::ostream&) const = 0;
+    virtual std::ostream& stream(std::ostream&) const = 0;
+};
+
+class Var : public Exp {
+public:
+    Var(std::string&& name)
+        : name_(std::move(name))
+    {}
+
+    const std::string& name() const { return name_; }
+
+    std::unique_ptr<Exp> clone() const override {
+        return std::make_unique<Var>(std::string(name()));
+    }
+
+    std::unique_ptr<Exp> eval(Ctxt& ctxt) const override {
+        auto i = ctxt.find(name());
+        return i != ctxt.end() ? i->second->clone() : clone();
+    }
+
+    std::ostream& emit(std::ostream& o) const override {
+        return o << name();
+    }
+
+    std::ostream& stream(std::ostream& o) const override {
+        return o << name();
+    }
+
+private:
+    std::string name_;
 };
 
 class Lam : public Exp {
@@ -40,11 +74,6 @@ public:
     const std::string& binder() const { return binder_; }
     const Exp* body() const { return body_.get(); }
 
-    std::ostream& stream(std::ostream& o) const override {
-        o << "(λ " << binder() << ". ";
-        return body()->stream(o) << ")";
-    }
-
     std::unique_ptr<Exp> clone() const override {
         return std::make_unique<Lam>(std::string(binder()), body()->clone());
     }
@@ -53,36 +82,19 @@ public:
         return std::make_unique<Lam>(std::string(binder()), body()->eval(ctxt));
     }
 
-private:
-    static int fresh_ = 0;
-
-    std::string binder_;
-    std::unique_ptr<Exp> body_;
-};
-
-class Var : public Exp {
-public:
-    Var(std::string&& name)
-        : name_(std::move(name))
-    {}
-
-    const std::string& name() const { return name_; }
+    std::ostream& emit(std::ostream& o) const override {
+        o << "(lambda (" << binder() << ") ";
+        return body()->emit(o) << ")";
+    }
 
     std::ostream& stream(std::ostream& o) const override {
-        return o << name();
-    }
-
-    std::unique_ptr<Exp> clone() const override {
-        return std::make_unique<Var>(std::string(name()));
-    }
-
-    std::unique_ptr<Exp> eval(Ctxt& ctxt) const override {
-        auto i = ctxt.find(name());
-        return i != ctxt.end() ? i->second->clone() : clone();
+        o << "(λ " << binder() << ". ";
+        return body()->stream(o) << ")";
     }
 
 private:
-    std::string name_;
+    std::string binder_;
+    std::unique_ptr<Exp> body_;
 };
 
 class App : public Exp {
@@ -94,12 +106,6 @@ public:
 
     const Exp* callee() const { return callee_.get(); }
     const Exp* arg() const { return arg_.get(); }
-
-    std::ostream& stream(std::ostream& o) const override {
-        o << "(";
-        callee()->stream(o) << " ";
-        return arg()->stream(o) << ")";
-    }
 
     std::unique_ptr<Exp> clone() const override {
         return std::make_unique<App>(callee()->clone(), arg()->clone());
@@ -116,6 +122,19 @@ public:
 
         return std::make_unique<App>(std::move(c), std::move(a));
     }
+
+    std::ostream& emit(std::ostream& o) const override {
+        o << "(";
+        callee()->emit(o) << " ";
+        return arg()->emit(o) << ")";
+    }
+
+    std::ostream& stream(std::ostream& o) const override {
+        o << "(";
+        callee()->stream(o) << " ";
+        return arg()->stream(o) << ")";
+    }
+
 private:
     std::unique_ptr<Exp> callee_;
     std::unique_ptr<Exp> arg_;
@@ -155,6 +174,7 @@ int main() {
 
     app(succ->clone(), n1->clone())->run()->dump();
     n2->dump();
+    n2->compile();
 
     auto p3 = p2->run();
     //p3->dump();
