@@ -1,8 +1,12 @@
-#include "ast.h"
+#include "parser.h"
+
+#include <iostream>
+#include <fstream>
 
 using namespace lam;
 
-int main() {
+int main(int, char** argv) {
+#if 0
     auto p = mk<Var>("x");
     auto x = p->eval();
     //x->dump();
@@ -35,6 +39,16 @@ int main() {
 
     //auto p3 = p2->eval();
     //p3->dump();
+
+    std::cout << argv[0] << std::endl;
+    std::cout << argv[1] << std::endl;
+    std::cout << "---" << std::endl;
+#endif
+    std::ifstream ifs(argv[1]);
+    Parser parser(ifs);
+    auto exp = parser.parse_exp();
+    //exp->dump();
+    exp->eval()->dump();
 
     return 0;
 }
