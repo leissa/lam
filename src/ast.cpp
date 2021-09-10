@@ -9,18 +9,26 @@ int Lam::counter_ = 0;
 // clone
 
 Ptr<Exp> Var::clone() const {
-    return mk<Var>(name());
+    return mk<Var>(loc(), name());
 }
 
 Ptr<Exp> App::clone() const {
-    return mk<App>(callee()->clone(), arg()->clone());
+    return mk<App>(loc(), callee()->clone(), arg()->clone());
 }
 
 Ptr<Exp> Lam::clone() const {
-    return mk<Lam>(binder(), body()->clone());
+    return mk<Lam>(loc(), binder(), body()->clone());
+}
+
+Ptr<Exp> Err::clone() const {
+    return mk<Err>(loc());
 }
 
 // stream
+
+void Exp::dump() const {
+    stream(std::cout) << std::endl;
+}
 
 std::ostream& Var::stream(std::ostream& o) const {
     return o << name();
@@ -37,8 +45,8 @@ std::ostream& Lam::stream(std::ostream& o) const {
     return body()->stream(o) << ")";
 }
 
-void Exp::dump() const {
-    stream(std::cout) << std::endl;
+std::ostream& Err::stream(std::ostream& o) const {
+    return o << "<error>";
 }
 
 // free_vars
@@ -63,20 +71,26 @@ void Lam::free_vars(Vars& vars) const {
     vars.erase(binder());
 }
 
+void Err::free_vars(Vars&) const {}
+
 // rename
 
 Ptr<Exp> Var::rename(const std::string& x, const std::string& y) const {
-    return name() == x ? mk<Var>(y) : clone();
+    return name() == x ? mk<Var>(loc(), y) : clone();
 }
 
 Ptr<Exp> App::rename(const std::string& x, const std::string& y) const {
     auto c = callee()->rename(x, y);
     auto a = arg()->rename(x, y);
-    return mk<App>(std::move(c), std::move(a));
+    return mk<App>(loc(), std::move(c), std::move(a));
 }
 
 Ptr<Exp> Lam::rename(const std::string& x, const std::string& y) const {
-    return mk<Lam>(binder() == x ? y : binder(), body()->rename(x, y));
+    return mk<Lam>(loc(), binder() == x ? y : binder(), body()->rename(x, y));
+}
+
+Ptr<Exp> Err::rename(const std::string&, const std::string&) const {
+    return clone();
 }
 
 // subst
@@ -88,15 +102,19 @@ Ptr<Exp> Var::subst(const std::string& x, const Exp& e) const {
 Ptr<Exp> App::subst(const std::string& x, const Exp& e) const {
     auto c = callee()->subst(x, e);
     auto a = arg()->subst(x, e);
-    return mk<App>(std::move(c), std::move(a));
+    return mk<App>(loc(), std::move(c), std::move(a));
 }
 
 Ptr<Exp> Lam::subst(const std::string& x, const Exp& e) const {
-    if (binder() == x) return mk<Lam>(binder(), body()->clone());
-    if (e.free_vars().count(binder()) == 0) return mk<Lam>(binder(), body()->subst(x, e));
+    if (binder() == x) return mk<Lam>(loc(), binder(), body()->clone());
+    if (e.free_vars().count(binder()) == 0) return mk<Lam>(loc(), binder(), body()->subst(x, e));
 
     auto fresh = binder() + "_" + std::to_string(counter_++);
-    return mk<Lam>(fresh, body()->rename(binder(), fresh)->subst(x, e));
+    return mk<Lam>(loc(), fresh, body()->rename(binder(), fresh)->subst(x, e));
+}
+
+Ptr<Exp> Err::subst(const std::string&, const Exp&) const {
+    return clone();
 }
 
 // eval
@@ -112,11 +130,15 @@ Ptr<Exp> App::eval() const {
     if (auto lam = dynamic_cast<const Lam*>(c.get()))
         return lam->body()->subst(lam->binder(), *a)->eval();
 
-    return mk<App>(std::move(c), std::move(a));
+    return mk<App>(loc(), std::move(c), std::move(a));
 }
 
 Ptr<Exp> Lam::eval() const {
-    return mk<Lam>(binder(), body()->eval());
+    return mk<Lam>(loc(), binder(), body()->eval());
+}
+
+Ptr<Exp> Err::eval() const {
+    return clone();
 }
 
 }

@@ -5,6 +5,8 @@
 #include <ostream>
 #include <unordered_set>
 
+#include "loc.h"
+
 namespace lam {
 
 template<class T>
@@ -17,8 +19,13 @@ using Vars = std::unordered_set<std::string>;
 
 class Exp {
 public:
+    Exp(Loc loc)
+        : loc_(loc)
+    {}
+
     virtual ~Exp() {}
 
+    Loc loc() const { return loc_; }
     void dump() const;
     Vars free_vars() const;
 
@@ -28,12 +35,16 @@ public:
     virtual Ptr<Exp> rename(const std::string&, const std::string&) const = 0;
     virtual Ptr<Exp> subst(const std::string&, const Exp&) const = 0;
     virtual Ptr<Exp> eval() const = 0;
+
+private:
+    Loc loc_;
 };
 
 class Var : public Exp {
 public:
-    Var(const std::string& name)
-        : name_(std::move(name))
+    Var(Loc loc, const std::string& name)
+        : Exp(loc)
+        , name_(std::move(name))
     {}
 
     const std::string& name() const { return name_; }
@@ -41,8 +52,8 @@ public:
     Ptr<Exp> clone() const override;
     std::ostream& stream(std::ostream& o) const override;
     void free_vars(Vars&) const override;
-    Ptr<Exp> rename(const std::string& x, const std::string& y) const override;
-    Ptr<Exp> subst(const std::string& x, const Exp& e) const override;
+    Ptr<Exp> rename(const std::string&, const std::string&) const override;
+    Ptr<Exp> subst(const std::string&, const Exp&) const override;
     Ptr<Exp> eval() const override;
 
 private:
@@ -51,8 +62,9 @@ private:
 
 class App : public Exp {
 public:
-    App(Ptr<Exp>&& callee, Ptr<Exp>&& arg)
-        : callee_(std::move(callee))
+    App(Loc loc, Ptr<Exp>&& callee, Ptr<Exp>&& arg)
+        : Exp(loc)
+        , callee_(std::move(callee))
         , arg_(std::move(arg))
     {}
 
@@ -62,7 +74,7 @@ public:
     Ptr<Exp> clone() const override;
     std::ostream& stream(std::ostream&) const override;
     void free_vars(Vars&) const override;
-    Ptr<Exp> rename(const std::string&, const std::string& ) const override;
+    Ptr<Exp> rename(const std::string&, const std::string&) const override;
     Ptr<Exp> subst(const std::string&, const Exp&) const override;
     Ptr<Exp> eval() const override;
 
@@ -73,8 +85,9 @@ private:
 
 class Lam : public Exp {
 public:
-    Lam(const std::string& binder, Ptr<Exp>&& body)
-        : binder_(std::move(binder))
+    Lam(Loc loc, const std::string& binder, Ptr<Exp>&& body)
+        : Exp(loc)
+        , binder_(std::move(binder))
         , body_(std::move(body))
     {}
 
@@ -84,8 +97,8 @@ public:
     Ptr<Exp> clone() const override;
     std::ostream& stream(std::ostream& o) const override;
     void free_vars(Vars&) const override;
-    Ptr<Exp> rename(const std::string& x, const std::string& y) const override;
-    Ptr<Exp> subst(const std::string& x, const Exp& e) const override;
+    Ptr<Exp> rename(const std::string&, const std::string&) const override;
+    Ptr<Exp> subst(const std::string&, const Exp&) const override;
     Ptr<Exp> eval() const override;
 
 private:
@@ -93,6 +106,23 @@ private:
 
     std::string binder_;
     Ptr<Exp> body_;
+};
+
+class Err : public Exp {
+public:
+    Err(Loc loc)
+        : Exp(loc)
+    {}
+
+    Ptr<Exp> clone() const override;
+    std::ostream& stream(std::ostream& o) const override;
+    void free_vars(Vars&) const override;
+    Ptr<Exp> rename(const std::string&, const std::string&) const override;
+    Ptr<Exp> subst(const std::string&, const Exp&) const override;
+    Ptr<Exp> eval() const override;
+
+private:
+    std::string name_;
 };
 
 }

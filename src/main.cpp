@@ -17,7 +17,7 @@ static const auto usage =
 int main(int argc, char** argv) {
     try {
         bool eval = false;
-        const char* filename = nullptr;
+        const char* file = nullptr;
 
         for (int i = 1; i != argc; ++i) {
             if (strcmp("-h", argv[i]) == 0 || strcmp("--help", argv[i]) == 0) {
@@ -25,18 +25,18 @@ int main(int argc, char** argv) {
                 return EXIT_SUCCESS;
             } else if (strcmp("-e", argv[i]) == 0 || strcmp("--eval", argv[i]) == 0) {
                 eval = true;
-            } else if (filename == nullptr) {
-                filename = argv[i];
+            } else if (file == nullptr) {
+                file = argv[i];
             } else {
                 throw std::logic_error("multiple input files given");
             }
         }
 
-        if (filename == nullptr)
+        if (file == nullptr)
             throw std::logic_error("no input file given");
 
-        std::ifstream file(filename);
-        Parser parser(filename, file);
+        std::ifstream ifs(file);
+        Parser parser(file, ifs);
         auto exp = parser.parse_exp();
         if (eval) exp = exp->eval();
         exp->dump();

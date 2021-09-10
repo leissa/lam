@@ -11,13 +11,14 @@ struct Pos {
 };
 
 struct Loc {
+    const char* file = nullptr;
     Pos begin;
     Pos finis;
-    const char* filename = nullptr;
 };
 
-std::ostream& operator<<(std::ostream&, Pos);
-std::ostream& operator<<(std::ostream&, Loc);
+std::ostream& operator<<(std::ostream&, const Pos&);
+std::ostream& operator<<(std::ostream&, const Loc&);
+
 
 }
 

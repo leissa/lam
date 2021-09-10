@@ -4,42 +4,20 @@
 #include <cassert>
 #include <istream>
 
-#include "loc.h"
-
+#include "tok.h"
 
 namespace lam {
-
-class Tok {
-public:
-    enum class Tag {
-        EoF, Id, Lam, Dot, Paren_L, Paren_R
-    };
-
-    Tok() {}
-    Tok(Tag tag)
-        : tag_(tag)
-    {}
-    Tok(const std::string& str)
-        : tag_(Tag::Id)
-        , str_(str)
-    {}
-
-    Tag tag() const { return tag_; }
-    bool isa(Tag tag) const { return tag == tag_; }
-    const std::string& str() const { assert(isa(Tag::Id)); return str_; }
-
-private:
-    Tag tag_;
-    std::string str_;
-};
 
 class Lexer {
 public:
     Lexer(const char*, std::istream&);
 
+    Loc loc() const { return loc_; }
     Tok lex(); ///< Get next @p Tok in stream.
 
 private:
+    Tok tok(Tok::Tag tag) { return {loc(), tag}; }
+    Tok tok(const char* str) { return {loc(), str}; }
     bool eof() const { peek(); return stream_.eof(); }
 
     template <typename Pred>
@@ -59,6 +37,7 @@ private:
     int peek() const { return stream_.peek(); }
 
     Loc loc_;
+    Pos peek_;
     std::istream& stream_;
     std::string str_;
 };

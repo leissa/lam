@@ -8,7 +8,7 @@ namespace lam {
 
 class Parser {
 public:
-    Parser(const char* filename, std::istream& stream);
+    Parser(const char* file, std::istream& stream);
 
     Ptr<Exp> parse_exp();
     Ptr<Exp> parse_exp_();
@@ -16,14 +16,31 @@ public:
     Ptr<Lam> parse_lam();
 
 private:
+    class Tracker {
+    public:
+        Tracker(Parser& parser, const Pos& pos)
+            : parser_(parser)
+            , pos_(pos)
+        {}
+
+        operator Loc() const { return {parser_.prev_.file, pos_, parser_.prev_.finis}; }
+
+    private:
+        Parser& parser_;
+        Pos pos_;
+    };
+
+    Tracker tracker() { return Tracker(*this, ahead().loc().begin); }
     Tok lex();
-    const Tok& ahead() const { return ahead_; }
+    Tok ahead() const { return ahead_; }
+    bool accept(Tok::Tag);
+    bool expect(Tok::Tag, const char*);
     Tok eat(Tok::Tag tag) { assert(tag == ahead().tag() && "internal parser error"); return lex(); }
-    bool accept(Tok::Tag tok);
-    bool expect(Tok::Tag tok);
-    void err();
+    void err(const std::string& what, const char* ctxt) { err(what, ahead(), ctxt); }
+    void err(const std::string& what, const Tok& tok, const char* ctxt);
 
     Lexer lexer_;
+    Loc prev_;
     Tok ahead_;
 };
 
