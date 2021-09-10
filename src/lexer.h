@@ -4,18 +4,10 @@
 #include <cassert>
 #include <istream>
 
+#include "loc.h"
+
+
 namespace lam {
-
-struct Pos {
-    int row = -1;
-    int col = -1;
-};
-
-struct Loc {
-    Pos begin;
-    Pos finis;
-    const char* filename = nullptr;
-};
 
 class Tok {
 public:
@@ -66,7 +58,7 @@ private:
     int next();
     int peek() const { return stream_.peek(); }
 
-    Loc loc;
+    Loc loc_;
     std::istream& stream_;
     std::string str_;
 };

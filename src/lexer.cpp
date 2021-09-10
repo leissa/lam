@@ -5,26 +5,28 @@
 namespace lam {
 
 Lexer::Lexer(const char* filename, std::istream& stream)
-    : loc{{1, 1}, {1, 1}, filename}
+    : loc_{{1, 1}, {1, 1}, filename}
     , stream_(stream)
 {
     if (!stream_) throw std::runtime_error("stream is bad");
 }
 
 int Lexer::next() {
+    ++loc_.finis.col;
     return stream_.get();
 }
 
 Tok Lexer::lex() {
     while (true) {
+        loc_.begin = loc_.finis;
         str_.clear();
 
         if (eof()) return Tok(Tok::Tag::EoF);
+
         if (accept('\n')) {
-            accept('\r');
-            ++loc.begin.row;
-            loc.begin.col = 1;
-            loc.finis = loc.begin;
+            accept('\r'); // DOS line ending
+            ++loc_.finis.row;
+            loc_.finis.col = 1;
             continue;
         }
 
@@ -39,7 +41,7 @@ Tok Lexer::lex() {
             return Tok(str_.c_str());
         }
 
-        std::cerr << "invalid input char: '" << peek() << "'" << std::endl;
+        std::cerr << loc_<< ": invalid input char: '" << (char) peek() << "'" << std::endl;
         next();
     }
 }
