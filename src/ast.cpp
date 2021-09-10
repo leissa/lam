@@ -33,7 +33,7 @@ std::ostream& App::stream(std::ostream& o) const {
 }
 
 std::ostream& Lam::stream(std::ostream& o) const {
-    o << "(λ " << binder() << ". ";
+    o << "(lam " << binder() << ". ";
     return body()->stream(o) << ")";
 }
 
@@ -43,21 +43,24 @@ void Exp::dump() const {
 
 // free_vars
 
-Vars Var::free_vars() const {
-    return Vars({name()});
+Vars Exp::free_vars() const {
+    Vars vars;
+    free_vars(vars);
+    return vars;
 }
 
-Vars App::free_vars() const {
-    auto c = callee()->free_vars();
-    auto a = callee()->free_vars();
-    c.insert(a.begin(), a.end());
-    return c;
+void Var::free_vars(Vars& vars) const {
+    vars.emplace(name());
 }
 
-Vars Lam::free_vars() const {
-    auto res = body()->free_vars();
-    res.erase(binder());
-    return res;
+void App::free_vars(Vars& vars) const {
+    callee()->free_vars(vars);
+    arg()->free_vars(vars);
+}
+
+void Lam::free_vars(Vars& vars) const {
+    body()->free_vars(vars);
+    vars.erase(binder());
 }
 
 // rename

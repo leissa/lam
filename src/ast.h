@@ -20,10 +20,11 @@ public:
     virtual ~Exp() {}
 
     void dump() const;
+    Vars free_vars() const;
 
     virtual Ptr<Exp> clone() const = 0;
     virtual std::ostream& stream(std::ostream&) const = 0;
-    virtual Vars free_vars() const = 0;
+    virtual void free_vars(Vars&) const = 0;
     virtual Ptr<Exp> rename(const std::string&, const std::string&) const = 0;
     virtual Ptr<Exp> subst(const std::string&, const Exp&) const = 0;
     virtual Ptr<Exp> eval() const = 0;
@@ -39,7 +40,7 @@ public:
 
     Ptr<Exp> clone() const override;
     std::ostream& stream(std::ostream& o) const override;
-    Vars free_vars() const override;
+    void free_vars(Vars&) const override;
     Ptr<Exp> rename(const std::string& x, const std::string& y) const override;
     Ptr<Exp> subst(const std::string& x, const Exp& e) const override;
     Ptr<Exp> eval() const override;
@@ -60,7 +61,7 @@ public:
 
     Ptr<Exp> clone() const override;
     std::ostream& stream(std::ostream&) const override;
-    Vars free_vars() const override;
+    void free_vars(Vars&) const override;
     Ptr<Exp> rename(const std::string&, const std::string& ) const override;
     Ptr<Exp> subst(const std::string&, const Exp&) const override;
     Ptr<Exp> eval() const override;
@@ -82,7 +83,7 @@ public:
 
     Ptr<Exp> clone() const override;
     std::ostream& stream(std::ostream& o) const override;
-    Vars free_vars() const override;
+    void free_vars(Vars&) const override;
     Ptr<Exp> rename(const std::string& x, const std::string& y) const override;
     Ptr<Exp> subst(const std::string& x, const Exp& e) const override;
     Ptr<Exp> eval() const override;
