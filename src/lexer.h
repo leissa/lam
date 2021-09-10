@@ -20,7 +20,7 @@ private:
     Tok tok(const char* str) { return {loc(), str}; }
     bool eof() const { peek(); return stream_.eof(); }
 
-    template <typename Pred>
+    template<class Pred>
     bool accept_if(Pred pred) {
         if (pred(peek())) {
             str_ += next();
@@ -36,8 +36,8 @@ private:
     int next();
     int peek() const { return stream_.peek(); }
 
-    Loc loc_;
-    Pos peek_;
+    Loc loc_; ///< @p Loc%ation of the @p Tok%en we are currently constructing within @p str_,
+    Pos pos_; ///< @p Pos%ition of the current @p peek().
     std::istream& stream_;
     std::string str_;
 };
