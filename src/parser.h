@@ -10,12 +10,14 @@ class Parser {
 public:
     Parser(const char* file, std::istream& stream);
 
-    Ptr<Exp> parse_exp();
+    Ptr<Exp> parse_prg();
+
+private:
+    Ptr<Exp> parse_exp(const char* ctxt);
     Ptr<Exp> parse_exp_();
     Ptr<Var> parse_var();
     Ptr<Lam> parse_lam();
 
-private:
     class Tracker {
     public:
         Tracker(Parser& parser, const Pos& pos)

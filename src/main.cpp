@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
         std::ifstream ifs(file);
         Parser parser(file, ifs);
-        auto exp = parser.parse_exp();
+        auto exp = parser.parse_prg();
         if (eval) exp = exp->eval();
         exp->dump();
     } catch (std::exception const& e) {

@@ -40,7 +40,6 @@ Tok Lexer::lex() {
         if (accept_if(isalpha)) {
             while (accept_if([](int i) { return isalpha(i) || isdigit(i); })) {}
             if (str_ == "lam") return tok(Tok::Tag::Lam);
-            std::cout << loc() << std::endl;
             return tok(str_.c_str());
         }
 

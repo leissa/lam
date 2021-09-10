@@ -37,33 +37,42 @@ void Parser::err(const std::string& what, const Tok& tok, const char* ctxt) {
     std::cerr << tok.loc() << ": expected " << what << ", got '" << tok << "' while parsing " << ctxt << std::endl;
 }
 
+Ptr<Exp> Parser::parse_prg() {
+    auto exp = parse_exp("program");
+    expect(Tok::Tag::EoF, "program");
+    return exp;
+}
+
+Ptr<Exp> Parser::parse_exp(const char* ctxt) {
+    auto track = tracker();
+
+    if (auto l = parse_exp_()) {
+        auto r = parse_exp_();
+
+        while (r) {
+            l = mk<App>(track, std::move(l), std::move(r));
+            r = parse_exp_();
+        }
+
+        return l;
+    }
+
+    err("expression", ctxt);
+    return mk<Err>(prev_);
+}
+
 Ptr<Exp> Parser::parse_exp_() {
     switch (ahead().tag()) {
         case Tok::Tag::Id:  return parse_var();
         case Tok::Tag::Lam: return parse_lam();
         case Tok::Tag::Paren_L: {
             lex();
-            auto res = parse_exp();
-            expect(Tok::Tag::Paren_R, "primary expression");
+            auto res = parse_exp("expression");
+            expect(Tok::Tag::Paren_R, "expression");
             return res;
         }
-        default:
-            lex();
-            return mk<Err>(prev_);
+        default:            return nullptr;
     }
-}
-
-Ptr<Exp> Parser::parse_exp() {
-    auto track = tracker();
-    auto l = parse_exp_();
-    auto r = parse_exp_();
-
-    while (!dynamic_cast<Err*>(r.get())) {
-        l = mk<App>(track, std::move(l), std::move(r));
-        r = parse_exp_();
-    }
-
-    return l;
 }
 
 Ptr<Var> Parser::parse_var() {
@@ -76,7 +85,7 @@ Ptr<Lam> Parser::parse_lam() {
     eat(Tok::Tag::Lam);
     std::string binder = ahead().isa(Tok::Tag::Id) ? lex().str() : std::string("<error>");
     expect(Tok::Tag::Dot, "lambda expression");
-    return mk<Lam>(track, binder, parse_exp());
+    return mk<Lam>(track, binder, parse_exp("body of a lambda expresison"));
 }
 
 }
