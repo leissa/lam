@@ -1,0 +1,3 @@
+(lam m. lam n. lam f. lam x. m f (n f x))
+    (lam f. lam x. f (f (f x)))
+    (lam f. lam x. f (f (f (f x))))
