@@ -34,7 +34,7 @@ public:
     virtual void free_vars(Vars&) const = 0;
     virtual Ptr<Exp> rename(const std::string&, const std::string&) const = 0;
     virtual Ptr<Exp> subst(const std::string&, const Exp&) const = 0;
-    virtual Ptr<Exp> eval(bool) const = 0;
+    virtual Ptr<Exp> eval(bool = false) const = 0;
 
 private:
     Loc loc_;

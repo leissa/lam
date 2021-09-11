@@ -129,11 +129,11 @@ Ptr<Exp> App::eval(bool stop_on_lam) const {
     if (auto lam = dynamic_cast<const Lam*>(c.get()))
         return lam->body()->subst(lam->binder(), *arg())->eval(stop_on_lam);
 
-    return mk<App>(loc(), c->eval(false), arg()->eval(false));
+    return mk<App>(loc(), std::move(c), arg()->eval());
 }
 
 Ptr<Exp> Lam::eval(bool stop_on_lam) const {
-    return stop_on_lam ? clone() : mk<Lam>(loc(), binder(), body()->eval(false));
+    return stop_on_lam ? clone() : mk<Lam>(loc(), binder(), body()->eval());
 }
 
 Ptr<Exp> Err::eval(bool) const {
