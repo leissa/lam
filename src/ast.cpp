@@ -119,25 +119,24 @@ Ptr<Exp> Err::subst(const std::string&, const Exp&) const {
 
 // eval
 
-Ptr<Exp> Var::eval() const {
+Ptr<Exp> Var::eval(bool) const {
     return clone();
 }
 
-Ptr<Exp> App::eval() const {
-    auto c = callee()->eval();
-    auto a = arg()->eval();
+Ptr<Exp> App::eval(bool stop_on_lam) const {
+    auto c = callee()->eval(true);
 
     if (auto lam = dynamic_cast<const Lam*>(c.get()))
-        return lam->body()->subst(lam->binder(), *a)->eval();
+        return lam->body()->subst(lam->binder(), *arg())->eval(stop_on_lam);
 
-    return mk<App>(loc(), std::move(c), std::move(a));
+    return mk<App>(loc(), c->eval(false), arg()->eval(false));
 }
 
-Ptr<Exp> Lam::eval() const {
-    return mk<Lam>(loc(), binder(), body()->eval());
+Ptr<Exp> Lam::eval(bool stop_on_lam) const {
+    return stop_on_lam ? clone() : mk<Lam>(loc(), binder(), body()->eval(false));
 }
 
-Ptr<Exp> Err::eval() const {
+Ptr<Exp> Err::eval(bool) const {
     return clone();
 }
 

@@ -34,7 +34,7 @@ public:
     virtual void free_vars(Vars&) const = 0;
     virtual Ptr<Exp> rename(const std::string&, const std::string&) const = 0;
     virtual Ptr<Exp> subst(const std::string&, const Exp&) const = 0;
-    virtual Ptr<Exp> eval() const = 0;
+    virtual Ptr<Exp> eval(bool) const = 0;
 
 private:
     Loc loc_;
@@ -54,7 +54,7 @@ public:
     void free_vars(Vars&) const override;
     Ptr<Exp> rename(const std::string&, const std::string&) const override;
     Ptr<Exp> subst(const std::string&, const Exp&) const override;
-    Ptr<Exp> eval() const override;
+    Ptr<Exp> eval(bool) const override;
 
 private:
     std::string name_;
@@ -76,7 +76,7 @@ public:
     void free_vars(Vars&) const override;
     Ptr<Exp> rename(const std::string&, const std::string&) const override;
     Ptr<Exp> subst(const std::string&, const Exp&) const override;
-    Ptr<Exp> eval() const override;
+    Ptr<Exp> eval(bool) const override;
 
 private:
     Ptr<Exp> callee_;
@@ -99,7 +99,7 @@ public:
     void free_vars(Vars&) const override;
     Ptr<Exp> rename(const std::string&, const std::string&) const override;
     Ptr<Exp> subst(const std::string&, const Exp&) const override;
-    Ptr<Exp> eval() const override;
+    Ptr<Exp> eval(bool) const override;
 
 private:
     static int counter_;
@@ -119,7 +119,7 @@ public:
     void free_vars(Vars&) const override;
     Ptr<Exp> rename(const std::string&, const std::string&) const override;
     Ptr<Exp> subst(const std::string&, const Exp&) const override;
-    Ptr<Exp> eval() const override;
+    Ptr<Exp> eval(bool) const override;
 
 private:
     std::string name_;
