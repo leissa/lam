@@ -1,0 +1,3 @@
+#include "pre.inc"
+
+mul _3 _4

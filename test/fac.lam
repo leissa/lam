@@ -1,0 +1,5 @@
+#include "pre.inc"
+
+#define fac (Y (lam f. lam n. if_then_else (iszero n) (_1) (mul n (f (pred n)))))
+
+fac _3
