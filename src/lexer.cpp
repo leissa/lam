@@ -26,7 +26,6 @@ Tok Lexer::lex() {
         if (eof()) return tok(Tok::Tag::EoF);
 
         if (accept('\n')) {
-            accept('\r'); // DOS newline
             ++peek_pos_.row;
             peek_pos_.col = 1;
             continue;
