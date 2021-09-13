@@ -13,7 +13,6 @@ public:
     Lexer(const char*, std::istream&);
 
     Loc loc() const { return loc_; }
-    Loc cur() const { return {loc_.file, loc_.finis, loc_.finis}; }
     Tok lex(); ///< Get next @p Tok in stream.
 
 private:
@@ -38,7 +37,7 @@ private:
     int peek() const { return stream_.peek(); }
 
     Loc loc_; ///< @p Loc%ation of the @p Tok%en we are currently constructing within @p str_,
-    Pos pos_; ///< @p Pos%ition of the current @p peek().
+    Pos peek_pos_; ///< @p Pos%ition of the current @p peek().
     std::istream& stream_;
     std::string str_;
 };
