@@ -67,8 +67,8 @@ Ptr<Exp> Parser::parse_exp_() {
         case Tok::Tag::Lam: return parse_lam();
         case Tok::Tag::Paren_L: {
             lex();
-            auto res = parse_exp("expression");
-            expect(Tok::Tag::Paren_R, "expression");
+            auto res = parse_exp("parenthesized expression");
+            expect(Tok::Tag::Paren_R, "parenthesized expression");
             return res;
         }
         default:            return nullptr;

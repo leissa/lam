@@ -37,13 +37,13 @@ Tok Lexer::lex() {
         if (accept('(')) return tok(Tok::Tag::Paren_L);
         if (accept(')')) return tok(Tok::Tag::Paren_R);
 
-        if (accept_if(isalpha)) {
-            while (accept_if([](int i) { return isalpha(i) || isdigit(i); })) {}
+        if (accept_if([](int i) { return i == '_' || isalpha(i); })) {
+            while (accept_if([](int i) { return i == '_' || isalpha(i) || isdigit(i); })) {}
             if (str_ == "lam") return tok(Tok::Tag::Lam);
             return tok(str_.c_str());
         }
 
-        std::cerr << loc_<< ": invalid input char: '" << (char) peek() << "'" << std::endl;
+        std::cerr << cur() << ": invalid input char: '" << (char) peek() << "'" << std::endl;
         next();
     }
 }

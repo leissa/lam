@@ -13,6 +13,7 @@ public:
     Lexer(const char*, std::istream&);
 
     Loc loc() const { return loc_; }
+    Loc cur() const { return {loc_.file, loc_.finis, loc_.finis}; }
     Tok lex(); ///< Get next @p Tok in stream.
 
 private:
