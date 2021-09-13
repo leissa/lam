@@ -10,8 +10,9 @@ const char* Tok::tag2str(Tok::Tag tag) {
         case Tok::Tag::Dot:     return ".";
         case Tok::Tag::Paren_L: return "(";
         case Tok::Tag::Paren_R: return ")";
-        default: assert(false && "unreachable");
     }
+
+    return nullptr; // shutup warning
 }
 
 std::ostream& operator<<(std::ostream& o, const Tok& tok) {

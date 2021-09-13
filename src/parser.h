@@ -37,7 +37,7 @@ private:
     Tok ahead() const { return ahead_; }
     bool accept(Tok::Tag);
     bool expect(Tok::Tag, const char*);
-    Tok eat(Tok::Tag tag) { assert(tag == ahead().tag() && "internal parser error"); return lex(); }
+    Tok eat([[maybe_unused]] Tok::Tag tag) { assert(tag == ahead().tag() && "internal parser error"); return lex(); }
     void err(const std::string& what, const char* ctxt) { err(what, ahead(), ctxt); }
     void err(const std::string& what, const Tok& tok, const char* ctxt);
 
