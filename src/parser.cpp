@@ -85,7 +85,7 @@ Ptr<Lam> Parser::parse_lam() {
     eat(Tok::Tag::Lam);
     std::string binder = ahead().isa(Tok::Tag::Id) ? lex().str() : std::string("<error>");
     expect(Tok::Tag::Dot, "lambda expression");
-    return mk<Lam>(track, binder, parse_exp("body of a lambda expresison"));
+    return mk<Lam>(track, binder, parse_exp("body of a lambda expression"));
 }
 
 }
