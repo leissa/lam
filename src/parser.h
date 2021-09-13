@@ -18,6 +18,7 @@ private:
     Ptr<Var> parse_var();
     Ptr<Lam> parse_lam();
 
+    /// Trick to easily keep track of @p Loc%ations.
     class Tracker {
     public:
         Tracker(Parser& parser, const Pos& pos)
@@ -32,14 +33,31 @@ private:
         Pos pos_;
     };
 
+    /// Factory method to build a @p Tracker.
     Tracker tracker() { return Tracker(*this, ahead().loc().begin); }
+
+    /// Invoke @p Lexer to retrieve next @p Tok%en.
     Tok lex();
+
+    /// Get lookahead.
     Tok ahead() const { return ahead_; }
-    bool accept(Tok::Tag);
-    bool expect(Tok::Tag, const char*);
+
+    /// If @p ahead() is a @p tag, @p lex(), and return @c true.
+    bool accept(Tok::Tag tag);
+
+    /// @p lex @p ahead() which must be a @p tag.
+    /// Issue @p err%or with @p ctxt otherwise.
+    bool expect(Tok::Tag tag, const char* ctxt);
+
+    /// Consume @p ahead which must be a @p tag; @c asserts otherwise.
     Tok eat([[maybe_unused]] Tok::Tag tag) { assert(tag == ahead().tag() && "internal parser error"); return lex(); }
-    void err(const std::string& what, const char* ctxt) { err(what, ahead(), ctxt); }
+
+    /// Issue an error message of the form:
+    /// <code>expected <what>, got '<tok>' while parsing <ctxt></code>
     void err(const std::string& what, const Tok& tok, const char* ctxt);
+
+    /// Same above but uses @p ahead() as @p tok.
+    void err(const std::string& what, const char* ctxt) { err(what, ahead(), ctxt); }
 
     Lexer lexer_;
     Loc prev_;

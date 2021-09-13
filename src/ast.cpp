@@ -75,18 +75,18 @@ void Err::free_vars(Vars&) const {}
 
 // rename
 
-Ptr<Exp> Var::rename(const std::string& x, const std::string& y) const {
-    return name() == x ? mk<Var>(loc(), y) : clone();
+Ptr<Exp> Var::rename(const std::string& x, const std::string& subst) const {
+    return name() == x ? mk<Var>(loc(), subst) : clone();
 }
 
-Ptr<Exp> App::rename(const std::string& x, const std::string& y) const {
-    auto c = callee()->rename(x, y);
-    auto a = arg()->rename(x, y);
+Ptr<Exp> App::rename(const std::string& x, const std::string& subst) const {
+    auto c = callee()->rename(x, subst);
+    auto a = arg()->rename(x, subst);
     return mk<App>(loc(), std::move(c), std::move(a));
 }
 
-Ptr<Exp> Lam::rename(const std::string& x, const std::string& y) const {
-    return mk<Lam>(loc(), binder() == x ? y : binder(), body()->rename(x, y));
+Ptr<Exp> Lam::rename(const std::string& x, const std::string& subst) const {
+    return mk<Lam>(loc(), binder() == x ? subst : binder(), body()->rename(x, subst));
 }
 
 Ptr<Exp> Err::rename(const std::string&, const std::string&) const {
