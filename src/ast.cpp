@@ -109,7 +109,7 @@ Ptr<Exp> Lam::subst(const std::string& x, const Exp& e) const {
     if (binder() == x) return mk<Lam>(loc(), binder(), body()->clone());
     if (e.free_vars().count(binder()) == 0) return mk<Lam>(loc(), binder(), body()->subst(x, e));
 
-    auto fresh = binder() + "_" + std::to_string(counter_++);
+    auto fresh = binder() + "%" + std::to_string(counter_++);
     return mk<Lam>(loc(), fresh, body()->rename(binder(), fresh)->subst(x, e));
 }
 
