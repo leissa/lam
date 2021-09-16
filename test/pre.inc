@@ -18,7 +18,7 @@
 #define T (lam x. lam y. x)
 #define F (lam x. lam y. y)
 #define iszero (lam n. lam x. lam y. n (lam z. y) x)
-#define if_then_else (lam x. x)
+#define if (lam x. x)
 
 #define Y (lam h. ((lam x. (h (lam a. ((x x) a)))) (lam x. (h (lam a. ((x x) a))))))
 #define Theta ((lam x. lam y. y (x x y)) (lam x. lam y. y (x x y)))
