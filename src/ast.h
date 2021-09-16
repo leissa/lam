@@ -75,30 +75,6 @@ private:
     std::string name_;
 };
 
-/// Function @p App%lication of the form (@p callee() @p arg()).
-class App : public Exp {
-public:
-    App(Loc loc, Ptr<Exp>&& callee, Ptr<Exp>&& arg)
-        : Exp(loc)
-        , callee_(std::move(callee))
-        , arg_(std::move(arg))
-    {}
-
-    const Exp* callee() const { return callee_.get(); }
-    const Exp* arg() const { return arg_.get(); }
-
-    Ptr<Exp> clone() const override;
-    std::ostream& stream(std::ostream&) const override;
-    void free_vars(Vars&) const override;
-    Ptr<Exp> rename(const std::string&, const std::string&) const override;
-    Ptr<Exp> subst(const std::string&, const Exp&) const override;
-    Ptr<Exp> eval(bool) const override;
-
-private:
-    Ptr<Exp> callee_;
-    Ptr<Exp> arg_;
-};
-
 /// @p Lam%bda abstraction of the form (<code>lam</code> @p binder(). @p body()).
 class Lam : public Exp {
 public:
@@ -123,6 +99,33 @@ private:
 
     std::string binder_;
     Ptr<Exp> body_;
+};
+
+/// Function @p App%lication of the form (@p callee() @p arg()).
+class App : public Exp {
+public:
+    App(Loc loc, Ptr<Exp>&& callee, Ptr<Exp>&& arg, bool let = false)
+        : Exp(loc)
+        , callee_(std::move(callee))
+        , arg_(std::move(arg))
+        , let_(let)
+    {}
+
+    const Exp* callee() const { return callee_.get(); }
+    const Exp* arg() const { return arg_.get(); }
+    const Lam* isa_let() const { return let_ ? (Lam*) callee() : nullptr; }
+
+    Ptr<Exp> clone() const override;
+    std::ostream& stream(std::ostream&) const override;
+    void free_vars(Vars&) const override;
+    Ptr<Exp> rename(const std::string&, const std::string&) const override;
+    Ptr<Exp> subst(const std::string&, const Exp&) const override;
+    Ptr<Exp> eval(bool) const override;
+
+private:
+    Ptr<Exp> callee_;
+    Ptr<Exp> arg_;
+    bool let_;
 };
 
 /// The @p Err%or @p Exp%ression is a dummy that does nothing and will only be constructed during parse errors.

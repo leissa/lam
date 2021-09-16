@@ -17,6 +17,7 @@ private:
     Ptr<Exp> parse_exp_();
     Ptr<Var> parse_var();
     Ptr<Lam> parse_lam();
+    Ptr<App> parse_let();
 
     /// Trick to easily keep track of @p Loc%ations.
     class Tracker {

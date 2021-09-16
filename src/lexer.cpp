@@ -32,13 +32,16 @@ Tok Lexer::lex() {
         }
 
         if (accept_if(isspace)) continue;
+        if (accept('=')) return tok(Tok::Tag::Assign);
         if (accept('.')) return tok(Tok::Tag::Dot);
         if (accept('(')) return tok(Tok::Tag::Paren_L);
         if (accept(')')) return tok(Tok::Tag::Paren_R);
 
         if (accept_if([](int i) { return i == '_' || isalpha(i); })) {
             while (accept_if([](int i) { return i == '_' || isalpha(i) || isdigit(i); })) {}
+            if (str_ == "in" ) return tok(Tok::Tag::In);
             if (str_ == "lam") return tok(Tok::Tag::Lam);
+            if (str_ == "let") return tok(Tok::Tag::Let);
             return tok(str_.c_str());
         }
 

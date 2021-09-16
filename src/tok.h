@@ -10,7 +10,7 @@ namespace lam {
 class Tok {
 public:
     enum class Tag {
-        EoF, Id, Lam, Dot, Paren_L, Paren_R
+        EoF, Assign, Id, In, Lam, Let, Dot, Paren_L, Paren_R
     };
 
     Tok() {}

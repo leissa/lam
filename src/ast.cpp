@@ -36,6 +36,11 @@ std::ostream& Var::stream(std::ostream& o) const {
 
 std::ostream& App::stream(std::ostream& o) const {
     o << "(";
+    if (auto lam = isa_let()) {
+        o << "let " << lam->binder() << " = ";
+        lam->body()->stream(o) << " in ";
+        return arg()->stream(o);
+    }
     callee()->stream(o) << " ";
     return arg()->stream(o) << ")";
 }

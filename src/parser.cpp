@@ -65,6 +65,7 @@ Ptr<Exp> Parser::parse_exp_() {
     switch (ahead().tag()) {
         case Tok::Tag::Id:  return parse_var();
         case Tok::Tag::Lam: return parse_lam();
+        case Tok::Tag::Let: return parse_let();
         case Tok::Tag::Paren_L: {
             lex();
             auto res = parse_exp("parenthesized expression");
@@ -86,6 +87,18 @@ Ptr<Lam> Parser::parse_lam() {
     std::string binder = ahead().isa(Tok::Tag::Id) ? lex().str() : std::string("<error>");
     expect(Tok::Tag::Dot, "lambda expression");
     return mk<Lam>(track, binder, parse_exp("body of a lambda expression"));
+}
+
+Ptr<App> Parser::parse_let() {
+    auto track = tracker();
+    eat(Tok::Tag::Let);
+    std::string binder = ahead().isa(Tok::Tag::Id) ? lex().str() : std::string("<error>");
+    expect(Tok::Tag::Assign, "let expression");
+    auto arg = parse_exp("let expression");
+    expect(Tok::Tag::In, "let expression");
+    auto body = parse_exp("body of a let expression");
+    auto lam = mk<Lam>(track, binder, std::move(body));
+    return mk<App>(track, std::move(lam), std::move(arg), true);
 }
 
 }
