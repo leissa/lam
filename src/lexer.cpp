@@ -37,6 +37,7 @@ Tok Lexer::lex() {
         if (accept('(')) return tok(Tok::Tag::Paren_L);
         if (accept(')')) return tok(Tok::Tag::Paren_R);
 
+        // lex identifier or keyword
         if (accept_if([](int i) { return i == '_' || isalpha(i); })) {
             while (accept_if([](int i) { return i == '_' || isalpha(i) || isdigit(i); })) {}
             if (str_ == "in" ) return tok(Tok::Tag::In);
