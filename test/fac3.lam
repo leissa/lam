@@ -1,0 +1,18 @@
+let succ = lam n. lam f. lam x. f (n f x) in
+
+let _0 = lam f. lam x. x in
+let _1 = succ _0 in
+let _2 = succ _1 in
+let _3 = succ _2 in
+
+let pred = lam n. lam f. lam x. n (lam g. lam h. h (g f)) (lam u. x) (lam u. u) in
+let mul  = lam m. lam n. lam f. lam x. m (n f) x in
+
+let iszero = lam n. lam x. lam y. n (lam z. y) x in
+let if = lam x. x in
+
+let Y = lam h. ((lam x. (h (lam a. ((x x) a)))) (lam x. (h (lam a. ((x x) a))))) in
+
+let fac = Y (lam f. lam n. if (iszero n) (_1) (mul n (f (pred n)))) in
+
+fac _3

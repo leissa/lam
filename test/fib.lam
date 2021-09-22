@@ -1,0 +1,7 @@
+#include "pre.inc"
+
+#define isone (lam n. (iszero (pred n)))
+
+#define fib (Y (lam f. lam n.   if  (iszero n) _0 \
+                                (if (isone  n) _1 (add (f (pred n)) (f (pred (pred n)))))))
+fib _7
