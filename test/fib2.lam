@@ -22,4 +22,4 @@ let Y = lam h. ((lam x. (h (lam a. ((x x) a)))) (lam x. (h (lam a. ((x x) a)))))
 let fib = Y (lam f. lam n.   if (iszero n) _0
                             (if (isone  n) _1 (add (f (pred n)) (f (pred (pred n)))))) in
 
-fib _7
+fib _4

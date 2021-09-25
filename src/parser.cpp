@@ -34,7 +34,7 @@ bool Parser::expect(Tok::Tag tag, const char* ctxt) {
 }
 
 void Parser::err(const std::string& what, const Tok& tok, const char* ctxt) {
-    std::cerr << tok.loc() << ": expected " << what << ", got '" << tok << "' while parsing " << ctxt << std::endl;
+    tok.loc().err() << "expected " << what << ", got '" << tok << "' while parsing " << ctxt << std::endl;
 }
 
 Ptr<Exp> Parser::parse_prg() {
@@ -84,7 +84,7 @@ Ptr<Var> Parser::parse_var() {
 Ptr<Lam> Parser::parse_lam() {
     auto track = tracker();
     eat(Tok::Tag::Lam);
-    std::string binder = ahead().isa(Tok::Tag::Id) ? lex().str() : std::string("<error>");
+    std::string binder = parse_id("binder of a lambda expression");
     expect(Tok::Tag::Dot, "lambda expression");
     return mk<Lam>(track, binder, parse_exp("body of a lambda expression"));
 }
@@ -92,13 +92,19 @@ Ptr<Lam> Parser::parse_lam() {
 Ptr<App> Parser::parse_let() {
     auto track = tracker();
     eat(Tok::Tag::Let);
-    std::string binder = ahead().isa(Tok::Tag::Id) ? lex().str() : std::string("<error>");
+    std::string binder = parse_id("binder of a let expression");
     expect(Tok::Tag::Assign, "let expression");
     auto arg = parse_exp("let expression");
     expect(Tok::Tag::In, "let expression");
     auto body = parse_exp("body of a let expression");
     auto lam = mk<Lam>(track, binder, std::move(body));
     return mk<App>(track, std::move(lam), std::move(arg), true);
+}
+
+std::string Parser::parse_id(const char* ctxt) {
+    if (ahead().isa(Tok::Tag::Id)) return lex().str();
+    err("identifier", ctxt);
+    return std::string("<error>");
 }
 
 }

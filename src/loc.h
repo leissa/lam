@@ -5,6 +5,9 @@
 
 namespace lam {
 
+// I don't recommend doing this in production code but for our toy projekct it's fine.
+extern int num_errors;
+
 struct Pos {
     Pos() = default;
     Pos(int row, int col)
@@ -30,6 +33,8 @@ struct Loc {
     const char* file = nullptr;
     Pos begin;
     Pos finis;
+
+    std::ostream& err() const;
 };
 
 std::ostream& operator<<(std::ostream&, const Pos&);

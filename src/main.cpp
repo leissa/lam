@@ -53,6 +53,11 @@ int main(int argc, char** argv) {
             exp = parser.parse_prg();
         }
 
+        if (num_errors != 0) {
+            std::cerr << num_errors << " error(s) encountered" << std::endl;
+            return EXIT_FAILURE;
+        }
+
         if (eval) exp = exp->eval();
         exp->dump();
     } catch (const std::exception& e) {
