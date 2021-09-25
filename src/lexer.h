@@ -38,6 +38,7 @@ private:
     /// Get next byte in @p stream_ and increase @p loc_ / @p peek_pos_.
     int next();
     int peek() const { return stream_.peek(); }
+    void eat_comments();
 
     Loc loc_;       ///< @p Loc%ation of the @p Tok%en we are currently constructing within @p str_,
     Pos peek_pos_;  ///< @p Pos%ition of the current @p peek().

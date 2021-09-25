@@ -3,7 +3,7 @@
 namespace lam {
 
 std::ostream& operator<<(std::ostream& o, const Pos& pos) {
-    return o << pos.row << "." << pos.col;
+    return o << pos.row << ":" << pos.col;
 }
 
 std::ostream& operator<<(std::ostream& o, const Loc& loc) {
