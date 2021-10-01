@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <istream>
+#include <unordered_map>
 
 #include "tok.h"
 
@@ -17,7 +18,6 @@ public:
 
 private:
     Tok tok(Tok::Tag tag) { return {loc(), tag}; }      ///< Faktory method to create a @p Tok.
-    Tok tok(const char* str) { return {loc(), str}; }   ///< Faktory method to create a @p Tok.
     bool eof() const { peek(); return stream_.eof(); }  ///< Have we reached the end of file?
 
     /// @return @c true if @p pred holds.
@@ -44,6 +44,7 @@ private:
     Pos peek_pos_;  ///< @p Pos%ition of the current @p peek().
     std::istream& stream_;
     std::string str_;
+    std::unordered_map<std::string, Tok::Tag> keywords_;
 };
 
 }

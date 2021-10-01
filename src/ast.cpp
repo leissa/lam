@@ -80,45 +80,45 @@ void Err::free_vars(Vars&) const {}
 
 // rename
 
-Ptr<Exp> Var::rename(const std::string& x, const std::string& subst) const {
+Ptr<Exp> Var::rename(Sym x, Sym subst) const {
     return name() == x ? mk<Var>(loc(), subst) : clone();
 }
 
-Ptr<Exp> App::rename(const std::string& x, const std::string& subst) const {
+Ptr<Exp> App::rename(Sym x, Sym subst) const {
     auto c = callee()->rename(x, subst);
     auto a = arg()->rename(x, subst);
     return mk<App>(loc(), std::move(c), std::move(a));
 }
 
-Ptr<Exp> Lam::rename(const std::string& x, const std::string& subst) const {
+Ptr<Exp> Lam::rename(Sym x, Sym subst) const {
     return mk<Lam>(loc(), binder() == x ? subst : binder(), body()->rename(x, subst));
 }
 
-Ptr<Exp> Err::rename(const std::string&, const std::string&) const {
+Ptr<Exp> Err::rename(Sym, Sym) const {
     return clone();
 }
 
 // subst
 
-Ptr<Exp> Var::subst(const std::string& x, const Exp& e) const {
+Ptr<Exp> Var::subst(Sym x, const Exp& e) const {
     return name() == x ? e.clone() : clone();
 }
 
-Ptr<Exp> App::subst(const std::string& x, const Exp& e) const {
+Ptr<Exp> App::subst(Sym x, const Exp& e) const {
     auto c = callee()->subst(x, e);
     auto a = arg()->subst(x, e);
     return mk<App>(loc(), std::move(c), std::move(a));
 }
 
-Ptr<Exp> Lam::subst(const std::string& x, const Exp& e) const {
+Ptr<Exp> Lam::subst(Sym x, const Exp& e) const {
     if (binder() == x) return mk<Lam>(loc(), binder(), body()->clone());
     if (e.free_vars().count(binder()) == 0) return mk<Lam>(loc(), binder(), body()->subst(x, e));
 
-    auto fresh = binder() + "%" + std::to_string(counter_++);
+    auto fresh = symtab.make(*binder() + "%" + std::to_string(counter_++));
     return mk<Lam>(loc(), fresh, body()->rename(binder(), fresh)->subst(x, e));
 }
 
-Ptr<Exp> Err::subst(const std::string&, const Exp&) const {
+Ptr<Exp> Err::subst(Sym, const Exp&) const {
     return clone();
 }
 

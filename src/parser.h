@@ -18,7 +18,7 @@ private:
     Ptr<Var> parse_var();
     Ptr<Lam> parse_lam();
     Ptr<App> parse_let();
-    std::string parse_id(const char* ctxt);
+    Sym parse_sym(const char* ctxt);
 
     /// Trick to easily keep track of @p Loc%ations.
     class Tracker {

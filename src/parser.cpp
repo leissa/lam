@@ -39,7 +39,7 @@ void Parser::err(const std::string& what, const Tok& tok, const char* ctxt) {
 
 Ptr<Exp> Parser::parse_prg() {
     auto exp = parse_exp("program");
-    expect(Tok::Tag::EoF, "program");
+    expect(Tok::Tag::M_eof, "program");
     return exp;
 }
 
@@ -63,13 +63,13 @@ Ptr<Exp> Parser::parse_exp(const char* ctxt) {
 
 Ptr<Exp> Parser::parse_exp_() {
     switch (ahead().tag()) {
-        case Tok::Tag::Id:  return parse_var();
-        case Tok::Tag::Lam: return parse_lam();
-        case Tok::Tag::Let: return parse_let();
-        case Tok::Tag::Paren_L: {
+        case Tok::Tag::M_id:  return parse_var();
+        case Tok::Tag::K_lam: return parse_lam();
+        case Tok::Tag::K_let: return parse_let();
+        case Tok::Tag::P_paren_l: {
             lex();
             auto res = parse_exp("parenthesized expression");
-            expect(Tok::Tag::Paren_R, "parenthesized expression");
+            expect(Tok::Tag::P_paren_r, "parenthesized expression");
             return res;
         }
         default:            return nullptr;
@@ -77,34 +77,34 @@ Ptr<Exp> Parser::parse_exp_() {
 }
 
 Ptr<Var> Parser::parse_var() {
-    auto tok = eat(Tok::Tag::Id);
-    return mk<Var>(tok.loc(), tok.str());
+    auto tok = eat(Tok::Tag::M_id);
+    return mk<Var>(tok.loc(), tok.sym());
 }
 
 Ptr<Lam> Parser::parse_lam() {
     auto track = tracker();
-    eat(Tok::Tag::Lam);
-    std::string binder = parse_id("binder of a lambda expression");
-    expect(Tok::Tag::Dot, "lambda expression");
+    eat(Tok::Tag::K_lam);
+    auto binder = parse_sym("binder of a lambda expression");
+    expect(Tok::Tag::P_dot, "lambda expression");
     return mk<Lam>(track, binder, parse_exp("body of a lambda expression"));
 }
 
 Ptr<App> Parser::parse_let() {
     auto track = tracker();
-    eat(Tok::Tag::Let);
-    std::string binder = parse_id("binder of a let expression");
-    expect(Tok::Tag::Assign, "let expression");
+    eat(Tok::Tag::K_let);
+    auto binder = parse_sym("binder of a let expression");
+    expect(Tok::Tag::P_assign, "let expression");
     auto arg = parse_exp("let expression");
-    expect(Tok::Tag::In, "let expression");
+    expect(Tok::Tag::K_in, "let expression");
     auto body = parse_exp("body of a let expression");
     auto lam = mk<Lam>(track, binder, std::move(body));
     return mk<App>(track, std::move(lam), std::move(arg), true);
 }
 
-std::string Parser::parse_id(const char* ctxt) {
-    if (ahead().isa(Tok::Tag::Id)) return lex().str();
+Sym Parser::parse_sym(const char* ctxt) {
+    if (ahead().isa(Tok::Tag::M_id)) return lex().sym();
     err("identifier", ctxt);
-    return std::string("<error>");
+    return symtab.make("<error>");
 }
 
 }

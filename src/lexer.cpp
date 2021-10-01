@@ -10,6 +10,10 @@ Lexer::Lexer(const char* filename, std::istream& stream)
     , stream_(stream)
 {
     if (!stream_) throw std::runtime_error("stream is bad");
+
+#define CODE(t, str) keywords_[str] = Tok::Tag::t;
+    LAM_KEYWORDS(CODE)
+#undef CODE
 }
 
 int Lexer::next() {
@@ -31,12 +35,12 @@ Tok Lexer::lex() {
         loc_.begin = peek_pos_;
         str_.clear();
 
-        if (eof()) return tok(Tok::Tag::EoF);
+        if (eof()) return tok(Tok::Tag::M_eof);
         if (accept_if(isspace)) continue;
-        if (accept('=')) return tok(Tok::Tag::Assign);
-        if (accept('.')) return tok(Tok::Tag::Dot);
-        if (accept('(')) return tok(Tok::Tag::Paren_L);
-        if (accept(')')) return tok(Tok::Tag::Paren_R);
+        if (accept('=')) return tok(Tok::Tag::P_assign);
+        if (accept('.')) return tok(Tok::Tag::P_dot);
+        if (accept('(')) return tok(Tok::Tag::P_paren_l);
+        if (accept(')')) return tok(Tok::Tag::P_paren_r);
         if (accept('/')) {
             if (accept('*')) {
                 eat_comments();
@@ -54,10 +58,8 @@ Tok Lexer::lex() {
         // lex identifier or keyword
         if (accept_if([](int i) { return i == '_' || isalpha(i); })) {
             while (accept_if([](int i) { return i == '_' || isalpha(i) || isdigit(i); })) {}
-            if (str_ == "in" ) return tok(Tok::Tag::In);
-            if (str_ == "lam") return tok(Tok::Tag::Lam);
-            if (str_ == "let") return tok(Tok::Tag::Let);
-            return tok(str_.c_str());
+            if (auto i = keywords_.find(str_); i != keywords_.end()) return tok(i->second); // keyword
+            return {loc(), symtab.make(str_)};                                              // identifier
         }
 
         Loc(loc_.file, peek_pos_).err() << "invalid input char: '" << (char) peek() << "'" << std::endl;

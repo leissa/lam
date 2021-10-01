@@ -5,7 +5,7 @@
 
 namespace lam {
 
-// I don't recommend doing this in production code but for our toy projekct it's fine.
+// I don't recommend global variables in production code but for our toy project it's fine.
 extern int num_errors;
 
 struct Pos {
