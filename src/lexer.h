@@ -17,7 +17,7 @@ public:
     Tok lex();                                          ///< Get next @p Tok in stream.
 
 private:
-    Tok tok(Tok::Tag tag) { return {loc(), tag}; }      ///< Faktory method to create a @p Tok.
+    Tok tok(Tok::Tag tag) { return {loc(), tag}; }      ///< Factory method to create a @p Tok.
     bool eof() const { peek(); return stream_.eof(); }  ///< Have we reached the end of file?
 
     /// @return @c true if @p pred holds.
