@@ -1,5 +1,7 @@
 # Lam - An Interpreter for the Lambda Calculus
 
+[![Makefile CI](https://github.com/leissa/lam/actions/workflows/makefile.yml/badge.svg)](https://github.com/leissa/lam/actions/workflows/makefile.yml)
+
 ## Building
 
 ```sh
