@@ -2,13 +2,17 @@
 
 ## Building
 
-```
+```sh
 make
 ```
 You can use different configs and specify them via the `CFG` variable like so:
-```
+```sh
 make CFG=debug
 ./build/debug/lam
+```
+You can enable a more verbose output of the build process like so:
+```sh
+make CFG=debug Q=
 ```
 
 ## Piping the Output of the C Preprocessor into the Interpreter
