@@ -41,4 +41,4 @@ lam x. /* C-style comment */ x // C++-style end-of-line comment
 
 Ambiguities in the expression productions are resolved according to the following rules:
 * Applications associate to the left: `e_1 e_2 e_3` = `(e_1 e_2) e_3`
-* Applications bind stronger than abstractions: `lam x. e_1 e_2` = `lam x. (e_1 e_2)}`
+* Applications bind stronger than abstractions: `lam x. e_1 e_2` = `lam x. (e_1 e_2)`
