@@ -7,12 +7,14 @@
 ```sh
 make
 ```
-You can use different configs and specify them via the `CFG` variable like so:
+You can use different configs and specify them via the `CFG` variable:
 ```sh
 make CFG=debug
 ./build/debug/lam
+make CFG=release
+./build/release/lam
 ```
-You can enable a more verbose output of the build process like so:
+You can enable a more verbose output of the build process which may help you figuring out build problems:
 ```sh
 make CFG=debug Q=
 ```
