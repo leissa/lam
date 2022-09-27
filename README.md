@@ -22,11 +22,11 @@ make CFG=debug Q=
 ## Grammar
 
 ```ebnf
-e = ID                  (* variable *)
-  | e e                 (* application *)
-  | lam ID '.' e        (* abstraction *)
-  | '(' e ')'           (* paranthesized expression *)
-  | 'let' ID e ';' e    (* let expression *)
+e = ID                    (* variable *)
+  | e e                   (* application *)
+  | lam ID '.' e          (* abstraction *)
+  | '(' e ')'             (* paranthesized expression *)
+  | 'let' ID '=' e ';' e  (* let expression *)
   ;
 ```
 where
