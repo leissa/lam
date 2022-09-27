@@ -1,9 +1,9 @@
-let T = lam x. lam y. x in
-let F = lam x. lam y. y in
+let T = lam x. lam y. x;
+let F = lam x. lam y. y;
 
-let not = lam a. a F T in
-let and = lam a. lam b. a b a in
-let  or = lam a. lam b. a a b in
-let xor = lam a. lam b. a (b F T) b in
+let not = lam a. a F T;
+let and = lam a. lam b. a b a;
+let  or = lam a. lam b. a a b;
+let xor = lam a. lam b. a (b F T) b;
 
 xor F F

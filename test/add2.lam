@@ -1,6 +1,6 @@
-let succ = lam n. lam f. lam x. f (n f x) in
-let add = lam m. lam n. n succ m in
-let _3 = lam f. lam x. f (f (f x)) in
-let _4 = lam f. lam x. f( f (f (f x))) in
+let succ = lam n. lam f. lam x. f (n f x);
+let add = lam m. lam n. n succ m;
+let _3 = lam f. lam x. f (f (f x));
+let _4 = lam f. lam x. f( f (f (f x)));
 
 add _3 _4

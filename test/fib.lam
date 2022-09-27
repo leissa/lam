@@ -1,25 +1,25 @@
-let succ = lam n. lam f. lam x. f (n f x) in
-let pred = lam n. lam f. lam x. n (lam g. lam h. h (g f)) (lam u. x) (lam u. u) in
-let add = lam m. lam n. n succ m in
-let sub = lam m. lam n. n pred m in
+let succ = lam n. lam f. lam x. f (n f x);
+let pred = lam n. lam f. lam x. n (lam g. lam h. h (g f)) (lam u. x) (lam u. u);
+let add = lam m. lam n. n succ m;
+let sub = lam m. lam n. n pred m;
 
-let _0 = lam f. lam x. x in
-let _1 = succ _0 in
-let _2 = succ _1 in
-let _3 = succ _2 in
-let _4 = succ _3 in
-let _5 = succ _4 in
-let _6 = succ _5 in
-let _7 = succ _6 in
-let _8 = succ _7 in
-let _9 = succ _8 in
+let _0 = lam f. lam x. x;
+let _1 = succ _0;
+let _2 = succ _1;
+let _3 = succ _2;
+let _4 = succ _3;
+let _5 = succ _4;
+let _6 = succ _5;
+let _7 = succ _6;
+let _8 = succ _7;
+let _9 = succ _8;
 
-let iszero = lam n. lam x. lam y. n (lam z. y) x in
-let leq = lam x. lam y. iszero(sub x y) in
-let if = lam x. x in
+let iszero = lam n. lam x. lam y. n (lam z. y) x;
+let leq = lam x. lam y. iszero(sub x y);
+let if = lam x. x;
 
-let Y = lam h. ((lam x. (h (lam a. ((x x) a)))) (lam x. (h (lam a. ((x x) a))))) in
+let Y = lam h. ((lam x. (h (lam a. ((x x) a)))) (lam x. (h (lam a. ((x x) a)))));
 
-let fib = Y (lam f. lam n. if (leq n _1) (n) (add (f (pred n)) (f (pred (pred n))))) in
+let fib = Y (lam f. lam n. if (leq n _1) (n) (add (f (pred n)) (f (pred (pred n)))));
 
 fib _5

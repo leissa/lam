@@ -1,5 +1,5 @@
-let _3 = lam f. lam x. f (f (f x)) in
-let _4 = lam f. lam x. f (f (f (f x))) in
-let mul = lam m. lam n. lam f. lam x. m (n f) x in
+let _3 = lam f. lam x. f (f (f x));
+let _4 = lam f. lam x. f (f (f (f x)));
+let mul = lam m. lam n. lam f. lam x. m (n f) x;
 
 mul _3 _4
