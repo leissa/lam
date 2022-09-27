@@ -17,9 +17,23 @@ You can enable a more verbose output of the build process like so:
 make CFG=debug Q=
 ```
 
-## Piping the Output of the C Preprocessor into the Interpreter
+## Grammar
 
-Simply use a shell pipe `|` and the special input file `-` to inform `lam` that it should read the input from `stdin`:
+```ebnf
+e = ID                  (* variable *)
+  | e e                 (* application *)
+  | lam ID '.' e        (* abstraction *)
+  | '(' e ')'           (* paranthesized expression *)
+  | 'let' ID e ';' e    (* let expression *)
+  ;
 ```
-cpp -P test/fac.lam | ./build/debug/lam -
-```
+where
+* `ID` = [`a`-`zA`-`Z``_`][`a`-`zA`-`Z0`-`9``_`]*
+
+**Note:** A *let expression* `let ID e_a; e_b` is just syntactic sugar for `(lam ID. e_b) e_a`.
+
+### Precedence
+
+Ambiguities in the expression productions are resolved according to the following rules:
+* Applications associate to the left: `e_1 e_2 e_3` = `(e_1 e_2) e_3`
+* Applications bind stronger than abstractions: `lam x. e_1 e_2` = `\lambda x. (e_1 e_2)}`
