@@ -39,6 +39,7 @@ Tok Lexer::lex() {
         if (accept_if(isspace)) continue;
         if (accept('=')) return tok(Tok::Tag::P_assign);
         if (accept('.')) return tok(Tok::Tag::P_dot);
+        if (accept(';')) return tok(Tok::Tag::P_semicolon);
         if (accept('(')) return tok(Tok::Tag::P_paren_l);
         if (accept(')')) return tok(Tok::Tag::P_paren_r);
         if (accept('/')) {

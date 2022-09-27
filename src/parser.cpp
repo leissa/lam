@@ -95,7 +95,7 @@ Ptr<App> Parser::parse_let() {
     auto binder = parse_sym("binder of a let expression");
     expect(Tok::Tag::P_assign, "let expression");
     auto arg = parse_exp("let expression");
-    expect(Tok::Tag::K_in, "let expression");
+    expect(Tok::Tag::P_semicolon, "let expression");
     auto body = parse_exp("body of a let expression");
     auto lam = mk<Lam>(track, binder, std::move(body));
     return mk<App>(track, std::move(lam), std::move(arg), true);

@@ -9,17 +9,17 @@
 namespace lam {
 
 #define LAM_KEYWORDS(m) \
-    m(K_in,  "in" )     \
     m(K_lam, "lam")     \
     m(K_let, "let")
 
 #define LAM_PUNCTUATORS(m)  \
-    m(P_assign,  "=")       \
-    m(P_dot,     ".")       \
-    m(P_paren_l, "(")       \
-    m(P_paren_r, ")")
+    m(P_assign,     "=")    \
+    m(P_dot,        ".")    \
+    m(P_semicolon,  ";")    \
+    m(P_paren_l,    "(")    \
+    m(P_paren_r,    ")")
 
-#define LAM_MISC(m)  \
+#define LAM_MISC(m)           \
     m(M_eof, "<end of file>") \
     m(M_id,  "<identifier>")
 
